@@ -1,0 +1,35 @@
+{
+  "name": "team-profile-gen",
+  "version": "1.0.0",
+  "description": "\"OOP and testing for week 10 homework\"",
+  "main": "app.js",
+  "directories": {
+    "lib": "lib",
+    "test": "tests"
+  },
+  "dependencies": {
+    "boxen": "^4.2.0",
+    "chalk": "^3.0.0",
+    "inquirer": "^7.0.5",
+    "jest": "^25.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/carlabeltran/team-profile-gen.git"
+  },
+  "keywords": [
+    "team",
+    "profile",
+    "generator"
+  ],
+  "author": "Carla Beltran",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/carlabeltran/team-profile-gen/issues"
+  },
+  "homepage": "https://github.com/carlabeltran/team-profile-gen#readme"
+}
