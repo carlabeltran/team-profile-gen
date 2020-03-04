@@ -22,13 +22,13 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 const render = require("./lib/htmlRenderer");
 ////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
-//TEAM EMPTY ARRAY
+//TEAM EMPTY ARRAY WITH ALL THE EMPLOYEES
 const team = [];
-
+//THIS IS AN EMPTY ARRAY WITH ALL THE EMPLOYEE IDS
 const employeeID = [];
 
 //////////////////////////////////////////////////////////////////
-
+//THIS FUNCTION IS STARTING A NEW APPLICATION
 function newApp() {
     function buildManagerProfile() {
         console.log("Team work makes the dream work. Lets get to it!");
@@ -36,7 +36,7 @@ function newApp() {
             {
                 type: "input",
                 name: "teamName",
-                message: "Please enter team name: "
+                message: "What is your team's name?"
             },
             {
                 type: "input",
@@ -52,7 +52,7 @@ function newApp() {
             {
                 type: "input",
                 name: "managerId",
-                message: "Please enter manager's id:",
+                message: "What is your manager's ID?",
                 validate: answer => {
                     const pass = answer.match(/^[1-9]\d*$/);
                     if (pass) {
@@ -65,7 +65,7 @@ function newApp() {
             {
                 type: "input",
                 name: "managersEmail",
-                message: "Please enter mangers email:",
+                message: "What is your manager's email?",
                 validate: answer => {
                     const pass = answer.match(/\S+@\S+\.\S+/);
                     if (pass) {
@@ -150,7 +150,7 @@ function newApp() {
                 {
                     type: "input",
                     name: "engineerId",
-                    message: "What is your engineer's id:",
+                    message: "What is your engineer's ID?",
                     validate: answer => {
                         const pass = answer.match(/^[1-9]\d*$/);
                         if (pass) {
@@ -169,7 +169,7 @@ function newApp() {
                 {
                     type: "input",
                     name: "engineerEmail",
-                    message: "Whats is your engineer's email:",
+                    message: "Whats is your engineer's email?",
                     validate: answer => {
                         const pass = answer.match(/\S+@\S+\.\S+/);
                         if (pass) {
@@ -182,7 +182,7 @@ function newApp() {
                 {
                     type: "input",
                     name: "engineerGitHub",
-                    message: "What is your engineer's GitHub username:",
+                    message: "What is your engineer's GitHub username?",
                     validate: answer => {
                         if (answer !== '') {
                             return true;
@@ -211,8 +211,8 @@ function newApp() {
             .prompt([
                 {
                     type: "input",
-                    name: "engineerName",
-                    message: "What is your engineer's name?",
+                    name: "internName",
+                    message: "What is your intern's name?",
                     validate: answer => {
                         if (answer !== "") {
                             return true;
@@ -222,8 +222,8 @@ function newApp() {
                 },
                 {
                     type: "input",
-                    name: "engineerId",
-                    message: "What is your engineer's id:",
+                    name: "internId",
+                    message: "What is your intern's ID?",
                     validate: answer => {
                         const pass = answer.match(/^[1-9]\d*$/);
                         if (pass) {
@@ -239,8 +239,8 @@ function newApp() {
                 },
                 {
                     type: "input",
-                    name: "engineerEmail",
-                    message: "Whats is your engineer's email:",
+                    name: "internEmail",
+                    message: "Whats is your intern's email?",
                     validate: answer => {
                         const pass = answer.match(/\S+@\S+\.\S+/);
                         if (pass) {
@@ -252,8 +252,8 @@ function newApp() {
                 },
                 {
                     type: "input",
-                    name: "engineerGitHub",
-                    message: "What is your engineer's GitHub username:",
+                    name: "internSchool",
+                    message: "What is your intern's school?",
                     validate: answer => {
                         if (answer !== "") {
                             return true;
@@ -269,7 +269,7 @@ function newApp() {
                     answers.internName,
                     answers.internId,
                     answers.internEmail,
-                    answers.internSchoolName
+                    answers.internSchool,
                 );
                 //PUSHING MANAGER TO TEAM ARRAY
                 team.push(intern);
