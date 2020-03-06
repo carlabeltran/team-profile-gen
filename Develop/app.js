@@ -1,3 +1,12 @@
+//COLLECTS USER DATA
+const inquirer = require("inquirer");
+//WE ARE ESTABLISHING THE ABSOLUTE PATH
+const path = require("path");
+//FILE SYSTEM
+const fs = require("fs");
+////////////////////////////////////////////////////////////////
+
+
 //////////////////////////////////////////////////////////////////
 //CLASS MANAGER
 const Manager = require("./lib/Manager");
@@ -5,214 +14,195 @@ const Manager = require("./lib/Manager");
 const Engineer = require("./lib/Engineer");
 //CLASS INTERN
 const Intern = require("./lib/Intern");
-//////////////////////////////////////////////////////////////////
-//PROMPTS THE USER
-const inquirer = require("inquirer");
-//WE ARE ESTABLISHING THE ABSOLUTE PATH
-const path = require("path");
-//FILE SYSTEM
-const fs = require("fs");
-//////////////////////////////////////////////////////////////////
-//​CREATING A OUTPUT FOLDER
-const OUTPUT_DIR = path.resolve(__dirname, "output");
-//CREATING A FILE IN THE OUTPUT FOLDER
-const outputPath = path.join(OUTPUT_DIR, "main.html");
-//////////////////////////////////////////////////////////////////
 //
 const render = require("./lib/htmlRenderer");
-////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+
+
 //////////////////////////////////////////////////////////////////
-//EMPTY TEAM ARRAY WITH ALL THE EMPLOYEES
+//
+const config = require("./package.json");
+////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////
+//CREATING A PATH TO THE ASSETS FOLDER
+const ASSET_DIR = path.resolve(__dirname, "assets");
+//​CREATING A OUTPUT FOLDER
+const OUTPUT_DIR = path.resolve(__dirname, "output");
+//CREATING A PATH TO THE OUTPUT FOLDER
+const outputPath = path.join(OUTPUT_DIR, "./output/team.html");
+//CREATING PATH TO THE CSS FILE IN THE ASSESTS FOLDER 
+const cssPath = path.join(ASSET_DIR, "style.css");
+///CREATING PATH TO THE CSS FILE IN THE OUTPUT FOLDER 
+const cssOutputPath = path.join(OUTPUT_DIR, "style.css");
+////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////
 const employees = [];
-//EMPTY ARRAY WITH ALL THE EMPLOYEE IDS
-const employeeID = [];
+const output = [];
 //////////////////////////////////////////////////////////////////
 
-//THIS FUNCTION WILL WELCOME THE USER
+
+
+////////////////////////////////////////////////////////////////
+//
+console.log(`Welcome to ${config.name} ${config.version}`)
+////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////
+//CHECK AND CREATE OUTPUT DIRECTORY
+if (!fs.existsSync(OUTPUT_DIR)) {
+    fs.mkdirSync(OUTPUT_DIR);
+}
+//////////////////////////////////////////////////////////////////
+
+
 function welcome() {
-    console.log("Welcome to the Team Profile Generator App!");
-    console.log("Team work makes the dream work!");
+    console.log("Team work makes the dream work! Let's start building your team!");
     inquirer
         .prompt([
             {
                 type: "input",
                 name: "teamName",
-                message: "What is your team's name?",
+                message: "What the team's name?",
                 validate: answer => {
                     if (answer !== "") {
                         return true;
                     }
                     return "Please enter at least one character!";
                 }
-            }
+            },
         ])
         .then(teamNameData => {
             const teamName = teamNameData.teamName;
-            console.log(`Welcome ${teamName}`);
+            console.log(`Hello ${teamName} team!`);
             employees.push(teamNameData);
-            createTeam();
+            ask();
         });
-
-};
-
-welcome();
-
-function createTeam() {
-    inquirer
-        .prompt([
-            {
-                type: "list",
-                name: "selectTeam",
-                message: "Which type of team member would you like to add?",
-                choices: [
-                    "Manager",
-                    "Engineer",
-                    "Intern",
-                    "I don't want to add any more team members",
-                ],
-            }
-        ])
-        .then(data => {
-            const role = data.selectTeam;
-            employees.push(role)
-            switch (data.selectTeam) {
-                case "Manager":
-                    addManager();
-                    break;
-                case "Engineer":
-                    addEngineer();
-                    break;
-                case "Intern":
-                    addIntern();
-                    break;
-                default:
-                    buildTeam();
-            }
-        })
 }
 
-//THIS FUNCTION WILL ADD MANAGER
+////////////////////////////////////////////////////////////////
+//MAIN QUESTION CONTAINS EMPLOYEE TYPE (ROLE)
+const mainQuestions = [
+    {
+        type: 'list',
+        name: 'role',
+        message: "Select employee type:",
+        choices: [
+            'Manager',
+            'Engineer',
+            'Intern'
+        ],
+        filter: function (val) {
+            return val.toLowerCase();
+        }
+    },
+];
+////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////
+//BASE QUESTION CONTAINS EMPLOYEE (NAME, ID, & EMAIL)
+const baseQuestion = [
+    {
+        type: "input",
+        name: "name",
+        message: "Whats the employee's name:",
+        validate: answer => {
+            if (answer !== "") {
+                return true;
+            }
+            return "Please enter at least one character!";
+        }
+    },
+    {
+        type: "input",
+        name: "id",
+        message: "What's the employee's ID:",
+                validate: function (answer) {
+                    const valid = !isNaN(parseFloat(answer));
+                    return valid || "Please enter a number";
+                },
+                filter: Number
+    },
+    {
+        type: "input",
+        name: "email",
+        message: "What's the employee's e-mail address?",
+        validate: answers => /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(answers) ? true : "Please enter a valid e-mail address."
+    },
+
+];
+////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////
+//MANAGER QUESTION CONTAINS OFFICE NUMBER & OFFICE PHONE NUMBER
 function addManager() {
-    console.log(
-        "Leaders need to provide strategy and direction and to give employees the tools that enable them to gather information and insight from around the world. Leaders shouldn’t try to make every decision -Bill Gates, founder of Microsoft"
-    );
+    console.log("Leaders need to provide strategy and direction and to give employees the tools that enable them to gather information and insight from around the world. Leaders shouldn’t try to make every decision -Bill Gates, founder of Microsoft");
     inquirer
         .prompt([
-            {
-                type: "input",
-                name: "name",
-                message: "What is your manager's name?",
-                validate: answer => {
-                    if (answer !== "") {
-                        return true;
-                    }
-                    return "Please enter at least one character!";
-                }
-            },
-            {
-                type: "input",
-                name: "id",
-                message: "What is your manager's ID?",
-                validate: answer => {
-                    const pass = answer.match(/^[1-9]\d*$/);
-                    if (pass) {
-                        return true;
-                    }
-
-                    return "Please enter a number greater than zero!";
-                }
-            },
-            {
-                type: "input",
-                name: "email",
-                message: "What is your manager's email?",
-                validate: answer => {
-                    const pass = answer.match(/\S+@\S+\.\S+/);
-                    if (pass) {
-                        return true;
-                    }
-
-                    return "Please check email and enter a valid email address!";
-                }
-            },
+            ...baseQuestion,
             {
                 type: "input",
                 name: "officeNumber",
-                message: "Please enter manager's office number:",
+                message: "What's the manager's office number:",
                 validate: answer => {
                     const pass = answer.match(/^[1-9]\d*$/);
                     if (pass) {
                         return true;
                     }
 
-                    return "Please enter a number greater than zero!";
+                    return "Please enter a valid room number.";
+                },
+            },
+            {
+                type: "input",
+                name: "phoneNumber",
+                message: "What's the manager's phone number?",
+                validate: answer => {
+                    const pass = answer.match(/^([01]{1})?[-.\s]?\(?(\d{3})\)?[-.\s]?(\d{3})[-.\s]?(\d{4})\s?((?:#|ext\.?\s?|x\.?\s?){1}(?:\d+)?)?$/i);
+                    if (pass) {
+                        return true;
+                    }
+                    return "Please enter a valid phone number!";
                 }
-            }
-        ])
-        .then(answers => {
-            const manager = new Manager(
-                answers.name,
-                answers.id,
-                answers.email,
-                answers.officeNumber
-            );
-            //PUSHING MANAGER TO TEAM ARRAY
-            employees.push(manager);
-            employeeID.push(answers.id);
-            createTeam();
-        });
-}
+            },
+            {
+                type: "confirm",
+                name: "addEmployee",
+                message: "Do you want to add another employee?",
+                default: true
+            },
 
-//THIS FUNCTION ADDS ENGINEER
+        ]).then(function(answers) {
+            if (answers.addEmployee === true) {
+                
+                ask()
+            } else {
+                output.push(answers);
+            }
+        })
+
+};
+////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////
+//ENGINEER QUESTION CONTAINS GIT HUB USER NAME
 function addEngineer() {
-    console.log("The engineer has been, and is, a maker of history.— James Kip Finch, American engineer and educator");
+    console.log(
+        "The engineer has been, and is, a maker of history.— James Kip Finch, American engineer and educator"
+    )
     inquirer
         .prompt([
+            ...baseQuestion,
             {
                 type: "input",
-                name: "name",
-                message: "What is your engineer's name?",
-                validate: answer => {
-                    if (answer !== "") {
-                        return true;
-                    }
-                    return "Please enter at least one character!";
-                }
-            },
-            {
-                type: "input",
-                name: "id",
-                message: "What is your engineer's ID?",
-                validate: answer => {
-                    const pass = answer.match(/^[1-9]\d*$/);
-                    if (pass) {
-                        if (employeeID.includes(answer)) {
-                            return "This ID is already taken.Please enter another ID.";
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    return "Please enter a number greater than zero!";
-                }
-            },
-            {
-                type: "input",
-                name: "email",
-                message: "Whats is your engineer's email?",
-                validate: answer => {
-                    const pass = answer.match(/\S+@\S+\.\S+/);
-                    if (pass) {
-                        return true;
-                    }
-
-                    return "Please check email and enter a valid email address!";
-                }
-            },
-            {
-                type: "input",
-                name: "github",
-                message: "What is your engineer's gitHub username?",
+                name: "gitHubUser",
+                message: "What the engineer's gitHub username?",
                 validate: answer => {
                     if (answer !== "") {
                         return true;
@@ -220,74 +210,33 @@ function addEngineer() {
 
                     return "Please enter at least one character!";
                 }
+            },
+            {
+                type: "confirm",
+                name: "addEmployee",
+                message: "Do you want to add another employee?",
+                default: true
+            },
+        ]).then(function(answers) {
+            if (answers.addEmployee === true) {
+                
+                ask()
+            } else {
+                output.push(answers);
             }
-        ])
-        .then(answers => {
-
-            const engineer = new Engineer(
-                answers.name,
-                answers.id,
-                answers.email,
-                answers.github,
-            );
-            //PUSHING ENGINEER TO TEAM ARRAY
-            employees.push(engineer);
-            //PUSHING ENGINEER ID TO EMPLOYEE ID ARRAY
-            employeeID.push(answers.id);
-
-            createTeam();
-        });
-}
+        })
+};
 //THIS FUNCTION ADDS INTERN
 function addIntern() {
-    console.log("Put your heart, mind, and soul into even your smallest acts. This is the secret of success.-Swami Sivananda");
+    console.log("Put your heart, mind, and soul into even your smallest acts. This is the secret of success.-Swami Sivananda"
+);
     inquirer
         .prompt([
-            {
-                type: "input",
-                name: "name",
-                message: "What is your intern's name?",
-                validate: answer => {
-                    if (answer !== "") {
-                        return true;
-                    }
-                    return "Please enter at least one character!";
-                }
-            },
-            {
-                type: "input",
-                name: "id",
-                message: "What is your intern's ID?",
-                validate: answer => {
-                    const pass = answer.match(/^[1-9]\d*$/);
-                    if (pass) {
-                        if (employeeID.includes(answer)) {
-                            return "This ID is already taken.Please enter another ID.";
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    return "Please enter a number greater than zero!";
-                }
-            },
-            {
-                type: "input",
-                name: "email",
-                message: "Whats is your intern's email?",
-                validate: answer => {
-                    const pass = answer.match(/\S+@\S+\.\S+/);
-                    if (pass) {
-                        return true;
-                    }
-
-                    return "Please check email and enter a valid email address!";
-                }
-            },
+            ...baseQuestion,
             {
                 type: "input",
                 name: "school",
-                message: "What is your intern's school?",
+                message: "What school does the intern attend?",
                 validate: answer => {
                     if (answer !== "") {
                         return true;
@@ -295,26 +244,91 @@ function addIntern() {
 
                     return "Please enter at least one character!";
                 }
+            },
+            {
+                type: "confirm",
+                name: "addEmployee",
+                message: "Do you want to add another employee?",
+                default: true
+            },
+        ]).then(function(answers) {
+            if (answers.addEmployee === true) {
+                
+                ask()
+            } else {
+                output.push(answers);
             }
-        ])
-        .then(answers => {
-            const intern = new Intern(
-                answers.name,
-                answers.id,
-                answers.email,
-                answers.school
-            );
-            //PUSHING MANAGER TO TEAM ARRAY
-            employees.push(intern);
-            employeeID.push(answers.id);
-            createTeam();
-        });
-}
-function buildTeam() {
-    console.log(employees);
-    if (!fs.existsSync(OUTPUT_DIR)) {
-        fs.mkdirSync(OUTPUT_DIR);
-    }
-    fs.writeFileSync(outputPath, render(employees), "utf-8");
-}
+        })
+};
 
+function ask(question) {
+    if (question === undefined) question = mainQuestions;
+    inquirer.prompt(question).then(answers => {
+        console.log(answers)
+        if (answers.addEmployee === undefined) {
+            switch (answers.role) {
+                case "manager":
+                    console.log("Manager data:");
+                    addManager()
+                    break;
+                case "engineer":
+                    console.log("Engineer data:");
+                    addEngineer()
+                    break;
+                case "intern":
+                    console.log("Intern data:");
+                    addIntern()
+                    break;
+                default:
+                    ask(question);
+            }
+        } else {
+            if (question === addManager()) {
+                answers.role = "manager";
+            } else if (question === addEngineer()) {
+                answers.role = "engineer";
+            } else if (question === addIntern()) {
+                answers.role = "intern";
+            }
+
+            output.push(answers);
+            if (answers.addEmployee) {
+                ask(question);
+            } else {
+                const employees = output.map(emp => {
+                    switch (emp.role) {
+                        case "manager":
+                            return new Manager(emp.name, emp.id, emp.email, emp.officeNumber, emp.teamName, emp.phoneNumber);
+                        case "engineer":
+                            return new Engineer(emp.name, emp.id, emp.email, emp.github, emp.teamName);
+                        case "intern":
+                            return new Intern(emp.name, emp.id, emp.email, emp.teamName, emp.school);
+                    }
+                });
+                const html = render(employees);
+
+                fs.writeFileSync(outputPath, html, "utf-8", function (err) {
+                    if (err) {
+                        throw err;
+                    } else {
+                        
+                        fs.writeFile(__dirname + '/output/team.html', html, 'utf-8', function (err) {
+                            if (err) {
+                                throw err;
+                            }
+                            console.log('file success!');
+                    
+                        });
+
+
+                        fs.createReadStream(cssPath).pipe(fs.createWriteStream(cssOutputPath));
+                    };
+                });
+    
+            };
+        };
+    });
+};
+
+
+welcome();

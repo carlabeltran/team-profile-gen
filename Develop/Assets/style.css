@@ -1,0 +1,15 @@
+.team-area{
+    width: 80%;
+}
+.team-heading{
+    background-color: red;
+    color: white;
+}
+.card-header{
+    background: blue;
+    color: white;
+}
+.employee-card{
+    margin: 10px 15px;
+    min-width:33%;
+}

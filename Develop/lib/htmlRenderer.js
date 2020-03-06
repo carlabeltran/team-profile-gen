@@ -73,6 +73,7 @@ const renderMain = html => {
     path.resolve(templatesDir, "main.html"),
     "utf8"
   );
+  template = replacePlaceholders(template, "teamName", employee.getTeamName());
   return replacePlaceholders(template, "team", html);
 };
 
